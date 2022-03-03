@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 
 const MostVotesDisplay = ({anecdotes, points}) =>
 {
+  
   let max = 0
   let indexMax = -1
   for(let i = 0; i < points.length; i++)

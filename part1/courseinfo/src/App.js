@@ -1,66 +1,56 @@
-import React from 'react'
+import React from "react"
+import Course from './components/Course'
 
-const Header = (props) => {
-  return (
-    <h1>{props.course}</h1>
-  )
-}
+const App = () => {
+  const courses = [
+    {
+      name: 'Half Stack application development',
+      id: 1,
+      parts: [
+        {
+          name: 'Fundamentals of React',
+          exercises: 10,
+          id: 1
+        },
+        {
+          name: 'Using props to pass data',
+          exercises: 7,
+          id: 2
+        },
+        {
+          name: 'State of a component',
+          exercises: 14,
+          id: 3
+        },
+        {
+          name: 'Redux',
+          exercises: 11,
+          id: 4
+        }
+      ]
+    }, 
+    {
+      name: 'Node.js',
+      id: 2,
+      parts: [
+        {
+          name: 'Routing',
+          exercises: 3,
+          id: 1
+        },
+        {
+          name: 'Middlewares',
+          exercises: 7,
+          id: 2
+        }
+      ]
+    }
+  ]
 
-const Part = (props) => {
-  return(
-    <p>name: {props.name} : number of exercises: {props.exercises}</p>
-  )
-}
-
-const Content = (props) => {
-
-  //destructure 
-  const [part1, part2, part3] = props.courses
   return (
     <div>
-      <Part name= {part1.name} exercises={part1.exercises}/>
-      <Part name= {part2.name} exercises={part2.exercises}/>
-      <Part name= {part3.name} exercises={part3.exercises}/>
+      {courses.map(course => <Course key={course.id} course={course} />)}
     </div>
-  )
-}
-
-const Total = (props) => {
-
-  const [part1, part2, part3] = props.courses
-
-  return(
-    <p>Total Number of exercises {part1.exercises + part2.exercises + part3.exercises}</p>
-  )
-  
-}
-const App = () => {
-
-  const course = {
-    name: 'Half Stack application development',
-    parts: [
-      {
-        name: 'Fundamentals of React',
-        exercises: 10
-      },
-      {
-        name: 'Using props to pass data',
-        exercises: 7
-      },
-      {
-        name: 'State of a component',
-        exercises: 14
-      }
-    ]
-  }
-
-  return(
-  <div>
-    <Header course={course.name}/>
-    <Content courses={course.parts}/>
-    <Total courses={course.parts}/>
-
-  </div>
   )
 }
 

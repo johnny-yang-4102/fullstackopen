@@ -10,7 +10,8 @@ const StatisticLine  = ({statName, stat}) =>
 
 const Statistics = ({good, bad, neutral}) => {
   
-  if(good === 0 && bad ===0 && neutral === 0)
+  const all = good+bad+neutral
+  if(all ===0)
   {
     return(
       <div>No feedback given</div>
@@ -22,9 +23,9 @@ const Statistics = ({good, bad, neutral}) => {
       <StatisticLine  statName="good" stat={good}/>
       <StatisticLine  statName="neutral" stat={neutral}/>
       <StatisticLine  statName="bad" stat={bad}/>
-      <StatisticLine  statName="all" stat={good+bad+neutral}/>
-      <StatisticLine  statName="average" stat={(good-bad)/(good+bad+neutral) }/>
-      <StatisticLine  statName="positive" stat={good/(good+bad+neutral)}/>
+      <StatisticLine  statName="all" stat={all}/>
+      <StatisticLine  statName="average" stat={(good-bad)/(all) }/>
+      <StatisticLine  statName="positive" stat={100* (good/(all)) + '%'}/>
     </div>
   )
 }
