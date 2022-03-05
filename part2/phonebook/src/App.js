@@ -5,6 +5,7 @@ import Person from './components/Person'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import phoneService from './services/PhonesService'
+import Notification from './components/Notification';
 
 function App() {
 
@@ -16,6 +17,8 @@ function App() {
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [messageType, setMessageType] = useState('')
+  const [message, setMessage] = useState(null)
 
   //Initial state of app
   useEffect(() => {
@@ -56,20 +59,38 @@ function App() {
 
     //Updating phone number associated with name
     const personFind = persons.find(person => person.name === newName) // search
-    if(personFind !== undefined)
-    {
-      if(window.confirm(`${personFind.name} is already added to the phone book, replace the old number with new one?`))
-      {
-        const personChange = {...personFind, number : newPhone}
+    if (personFind !== undefined) {
+      if (window.confirm(`${personFind.name} is already added to the phone book, replace the old number with new one?`)) {
+        const personChange = { ...personFind, number: newPhone }
 
         phoneService
-        .update(personFind.id, personChange)
-        .then(person => {
-          setPersons(persons.map(person => person.name === personFind.name ? personChange : person))
-        })
-        return;
+          .update(personFind.id, personChange)
+          .then(person => {
+            setPersons(persons.map(person => person.name === personFind.name ? personChange : person))
+          })
+          .catch(error => {
+
+            setMessage(
+              `Information of ${personFind.name} has already been removed from server`
+            )
+            setMessageType("phone-error-add")
+
+            setTimeout(() => {
+              setMessage(null)
+            }, 3000)
+
+            //Remove person not in list
+            setPersons(persons.filter(p => p !== personFind))
+          })
+
+        return
       }
     }
+
+
+    //-----------------------------------
+    //Adding new user below 
+    //-----------------------------------
 
     const personObj = {
       name: newName,
@@ -84,6 +105,16 @@ function App() {
         setNewPhone("")
         setNewName("")
       })
+
+    setMessage(
+      `Added ${personObj.name}`
+    )
+    setMessageType("phone-added")
+
+    setTimeout(() => {
+      setMessage(null)
+    }, 2000)
+
   }
 
   //Constantly updating name and handlephone through input event listeners
@@ -121,51 +152,52 @@ function App() {
 
   //Filter here
   //We don't use a state variable because putting it in the same function as changing another filter causes a lag
-    //Unsure of why...
+  //Unsure of why...
   let end = newFilter.length
   const personsFiltered = persons.filter((person) => person.name.substring(0, end).toLowerCase() === newFilter.toLowerCase());
 
 
-  if(personsFiltered.length === 0 && newFilter.length === 0)
-  {
+  if (personsFiltered.length === 0 && newFilter.length === 0) {
     return (
       <div>
         <h2>Phonebook</h2>
-  
+        <Notification message={message} />
+
         <Filter newFilter={newFilter} handleFilterChange={handleFilterChange} />
-  
+
         <h3>Add a new</h3>
-  
+
         <PersonForm newName={newName} newPhone={newPhone}
           handleNameChange={handleNameChange} handlePhoneChange={handlePhoneChange}
           addInfo={addInfo} />
-  
+
         <h3>Numbers</h3>
-  
+
         {persons.map(person => <Person key={person.id} deletePerson={() => deletePerson(person.id)} person={person} />)}
-  
+
       </div>
     )
   }
-  
+
   //Filtered result
-  return(
+  return (
     <div>
-        <h2>Phonebook</h2>
-  
-        <Filter newFilter={newFilter} handleFilterChange={handleFilterChange} />
-  
-        <h3>Add a new</h3>
-  
-        <PersonForm newName={newName} newPhone={newPhone}
-          handleNameChange={handleNameChange} handlePhoneChange={handlePhoneChange}
-          addInfo={addInfo} />
-  
-        <h3>Numbers</h3>
-  
-        {personsFiltered.map(person => <Person key={person.id} deletePerson={() => deletePerson(person.id)} person={person} />)}
-  
-      </div>
+      <h2>Phonebook</h2>
+      <Notification message={message} messageType={messageType} />
+
+      <Filter newFilter={newFilter} handleFilterChange={handleFilterChange} />
+
+      <h3>Add a new</h3>
+
+      <PersonForm newName={newName} newPhone={newPhone}
+        handleNameChange={handleNameChange} handlePhoneChange={handlePhoneChange}
+        addInfo={addInfo} />
+
+      <h3>Numbers</h3>
+
+      {personsFiltered.map(person => <Person key={person.id} deletePerson={() => deletePerson(person.id)} person={person} />)}
+
+    </div>
   )
 
 }
