@@ -117,35 +117,57 @@ function App() {
     event.preventDefault()
     setNewFilter(event.target.value)
 
-    //fix filter
-
-    //See if beginning of substring matches filter
-    // let end = newFilter.length
-    //setPersonsFiltered(persons.filter((person) => person.name.substring(0, end) === newFilter))
   }
 
+  //Filter here
+  //We don't use a state variable because putting it in the same function as changing another filter causes a lag
+    //Unsure of why...
   let end = newFilter.length
   const personsFiltered = persons.filter((person) => person.name.substring(0, end).toLowerCase() === newFilter.toLowerCase());
 
 
-  return (
+  if(personsFiltered.length === 0 && newFilter.length === 0)
+  {
+    return (
+      <div>
+        <h2>Phonebook</h2>
+  
+        <Filter newFilter={newFilter} handleFilterChange={handleFilterChange} />
+  
+        <h3>Add a new</h3>
+  
+        <PersonForm newName={newName} newPhone={newPhone}
+          handleNameChange={handleNameChange} handlePhoneChange={handlePhoneChange}
+          addInfo={addInfo} />
+  
+        <h3>Numbers</h3>
+  
+        {persons.map(person => <Person key={person.id} deletePerson={() => deletePerson(person.id)} person={person} />)}
+  
+      </div>
+    )
+  }
+  
+  //Filtered result
+  return(
     <div>
-      <h2>Phonebook</h2>
-
-      <Filter newFilter={newFilter} handleFilterChange={handleFilterChange} />
-
-      <h3>Add a new</h3>
-
-      <PersonForm newName={newName} newPhone={newPhone}
-        handleNameChange={handleNameChange} handlePhoneChange={handlePhoneChange}
-        addInfo={addInfo} />
-
-      <h3>Numbers</h3>
-
-      {persons.map(person => <Person key={person.id} deletePerson={() => deletePerson(person.id)} person={person} />)}
-
-    </div>
+        <h2>Phonebook</h2>
+  
+        <Filter newFilter={newFilter} handleFilterChange={handleFilterChange} />
+  
+        <h3>Add a new</h3>
+  
+        <PersonForm newName={newName} newPhone={newPhone}
+          handleNameChange={handleNameChange} handlePhoneChange={handlePhoneChange}
+          addInfo={addInfo} />
+  
+        <h3>Numbers</h3>
+  
+        {personsFiltered.map(person => <Person key={person.id} deletePerson={() => deletePerson(person.id)} person={person} />)}
+  
+      </div>
   )
+
 }
 
 export default App;
