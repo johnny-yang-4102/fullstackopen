@@ -2,7 +2,8 @@ import './App.css';
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
-import { useState } from 'react'
+import { useState, useEffect} from 'react'
+import axios from 'axios'
 
 const initialArr = [
   { name: 'Arto Hellas', number: '040-123456', id: 1 },
@@ -14,13 +15,26 @@ const initialArr = [
 function App() {
 
   
-  const [persons, setPersons] = useState(initialArr)
+  const [persons, setPersons] = useState([])
 
   //const [personsFiltered, setPersonsFiltered] = useState(initialArr)
 
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('')
   const [newFilter, setNewFilter] = useState('')
+
+  //Initial state of app
+  useEffect(() => {
+
+    axios.get('http://localhost:3001/persons')
+    .then(response => {
+
+      setPersons(response.data)
+
+    })
+  
+  }, 
+  [])
 
   //-------------------------------------
   //PersonForm
