@@ -1,20 +1,14 @@
 import './App.css';
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
-import Persons from './components/Persons'
-import { useState, useEffect} from 'react'
+import Person from './components/Person'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
-
-const initialArr = [
-  { name: 'Arto Hellas', number: '040-123456', id: 1 },
-  { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-  { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-  { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-]
+import phoneService from './services/PhonesService'
 
 function App() {
 
-  
+
   const [persons, setPersons] = useState([])
 
   //const [personsFiltered, setPersonsFiltered] = useState(initialArr)
@@ -27,26 +21,24 @@ function App() {
   useEffect(() => {
 
     axios.get('http://localhost:3001/persons')
-    .then(response => {
+      .then(response => {
 
-      setPersons(response.data)
+        setPersons(response.data)
 
-    })
-  
-  }, 
-  [])
+      })
+
+  },
+    [])
 
   //-------------------------------------
   //PersonForm
   //-------------------------------------
-  
+
   //Find duplicates
   const isDuplicate = (name, number) => {
-    
-    
-    for(let i = 0; i < persons.length; i++)
-    {
-      if(persons[i].name === name && persons[i].number === number)
+
+    for (let i = 0; i < persons.length; i++) {
+      if (persons[i].name === name && persons[i].number === number)
         return true;
     }
 
@@ -56,20 +48,42 @@ function App() {
   const addInfo = (event) => {
     event.preventDefault()
 
-    if(isDuplicate(newName, newPhone))
-    {
+    //Keep this for now..
+    if (isDuplicate(newName, newPhone)) {
       alert(`${newName}, ${newPhone} is already  an entry in the phone book`)
       return;
     }
-    const personObj = {
-      name: newName,
-      number: newPhone,
-      id: persons.length + 1
+
+    //Updating phone number associated with name
+    const personFind = persons.find(person => person.name === newName) // search
+    if(personFind !== undefined)
+    {
+      if(window.confirm(`${personFind.name} is already added to the phone book, replace the old number with new one?`))
+      {
+        const personChange = {...personFind, number : newPhone}
+
+        phoneService
+        .update(personFind.id, personChange)
+        .then(person => {
+          setPersons(persons.map(person => person.name === personFind.name ? personChange : person))
+        })
+        return;
+      }
     }
 
-    setNewPhone("")
-    setNewName("")
-    setPersons(persons.concat(personObj))
+    const personObj = {
+      name: newName,
+      number: newPhone
+    }
+
+    //Updating database and states
+    phoneService
+      .create(personObj)
+      .then(person => {
+        setPersons(persons.concat(person))
+        setNewPhone("")
+        setNewName("")
+      })
   }
 
   //Constantly updating name and handlephone through input event listeners
@@ -83,6 +97,18 @@ function App() {
     setNewPhone(event.target.value)
   }
 
+  const deletePerson = (id) => {
+    const personToDelete = persons.find(person => person.id === id)
+    const updatedPersons = persons.filter(person => person !== personToDelete)
+    if (window.confirm(`Delete ${personToDelete.name}?`)) {
+      phoneService
+        .deleteData(id)
+        .then(() => {
+          setPersons(updatedPersons)
+        })
+    }
+  }
+
   //-------------------------------------
   //Filter
   //-------------------------------------
@@ -90,6 +116,8 @@ function App() {
   const handleFilterChange = (event) => {
     event.preventDefault()
     setNewFilter(event.target.value)
+
+    //fix filter
 
     //See if beginning of substring matches filter
     // let end = newFilter.length
@@ -104,17 +132,18 @@ function App() {
     <div>
       <h2>Phonebook</h2>
 
-      <Filter newFilter={newFilter} handleFilterChange={handleFilterChange}/>
+      <Filter newFilter={newFilter} handleFilterChange={handleFilterChange} />
 
       <h3>Add a new</h3>
 
-      <PersonForm newName={newName} newPhone={newPhone} 
-      handleNameChange={handleNameChange} handlePhoneChange={handlePhoneChange}
-      addInfo={addInfo}/>
+      <PersonForm newName={newName} newPhone={newPhone}
+        handleNameChange={handleNameChange} handlePhoneChange={handlePhoneChange}
+        addInfo={addInfo} />
 
       <h3>Numbers</h3>
 
-      <Persons persons={personsFiltered} />
+      {persons.map(person => <Person key={person.id} deletePerson={() => deletePerson(person.id)} person={person} />)}
+
     </div>
   )
 }
