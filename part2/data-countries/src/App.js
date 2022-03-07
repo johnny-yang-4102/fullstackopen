@@ -1,4 +1,3 @@
-import './App.css';
 import Filter from './components/Filter';
 import Countries from './components/Countries';
 
