@@ -1,7 +1,20 @@
+const { json } = require('express')
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 
+morgan.token('person', (req, res) => {
+
+    const id = Number(req.params.id)
+    const person = phonebook.find(person => person.id === id)
+    
+    return JSON.stringify({"name" : person.name, "number": person.number})
+})
+
 app.use(express.json())
+
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :person'))
 
 let phonebook =
     [
@@ -30,10 +43,14 @@ let phonebook =
 
 app.get('/', (request, response) => {
     response.send('<h1>Hello World!</h1>')
+
+    // console.log(process.stdout)
 })
 
 app.get('/api/persons', (request, response) => {
     response.json(phonebook)
+
+    // console.log(process.stdout)
 })
 
 app.get('/api/persons/:id', (request, response) => {
@@ -44,10 +61,13 @@ app.get('/api/persons/:id', (request, response) => {
         response.json(person)
     else
         response.status(404).end()
+
+    // console.log(process.stdout)
 })
 
 app.get('/info', (request, response) => {
     response.send(`<p>Phonebook has info for ${phonebook.length} people</p><p>${new Date()}</p>`)
+    // console.log(process.stdout)
 })
 
 app.delete('/api/persons/:id', (request, response) => {
@@ -55,6 +75,7 @@ app.delete('/api/persons/:id', (request, response) => {
 
     phonebook = phonebook.filter(phone => phone.id !== id)
     response.status(204).end()
+    // console.log(process.stdout)
 })
 
 app.post('/api/phonebook', (request, response) => {
@@ -68,7 +89,7 @@ app.post('/api/phonebook', (request, response) => {
 
     const findName = phonebook.find(p => p.name.toLowerCase() === body.name.toLowerCase())
 
-    if(findName)
+    if (findName)
         return response.status(409).json({ error: 'Name must be unique' })
 
 
@@ -78,12 +99,13 @@ app.post('/api/phonebook', (request, response) => {
     const person = {
         name: body.name,
         phone: body.phone,
-        id: maxId+1
+        id: maxId + 1
     }
 
     phonebook = phonebook.concat(person)
 
     response.json(person)
+    // console.log(process.stdout)
 })
 
 const PORT = 3001
