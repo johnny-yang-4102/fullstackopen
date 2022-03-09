@@ -5,13 +5,18 @@ const app = express()
 
 morgan.token('person', (req, res) => {
 
-    const id = Number(req.params.id)
-    const person = phonebook.find(person => person.id === id)
-    
-    return JSON.stringify({"name" : person.name, "number": person.number})
+    if (req.method === "POST") {
+
+        const person = req.body
+
+        return JSON.stringify({ "name": person.name, "number": person.number })
+    }
+
+    return ""
 })
 
 app.use(express.json())
+
 
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :person'))
@@ -39,6 +44,7 @@ let phonebook =
             "number": "39-23-6423122"
         }
     ]
+
 
 
 app.get('/', (request, response) => {
@@ -78,7 +84,7 @@ app.delete('/api/persons/:id', (request, response) => {
     // console.log(process.stdout)
 })
 
-app.post('/api/phonebook', (request, response) => {
+app.post('/api/persons', (request, response) => {
 
 
     const body = request.body
