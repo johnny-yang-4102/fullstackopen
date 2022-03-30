@@ -50,6 +50,7 @@ const Country = ({ country }) => {
                 <p>Wind {weatherData.wind.speed + "m/s"}</p>
                 <button onClick={handleShowInfo}>hide</button>
             </div>
+            
         )
     }
     else

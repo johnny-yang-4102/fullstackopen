@@ -23,7 +23,7 @@ function App() {
   //Initial state of app
   useEffect(() => {
 
-    axios.get('http://localhost:3001/persons')
+    axios.get('/api/persons')
       .then(response => {
 
         setPersons(response.data)
@@ -102,14 +102,25 @@ function App() {
       .create(personObj)
       .then(person => {
         setPersons(persons.concat(person))
+
+        //Filter
         setNewPhone("")
         setNewName("")
-      })
 
-    setMessage(
-      `Added ${personObj.name}`
-    )
-    setMessageType("phone-added")
+        setMessage(
+          `Added ${personObj.name}`
+        )
+        setMessageType("phone-added")
+        
+      }).catch(error => {
+
+        setMessage(
+          error.response.data['error']
+        )
+        setMessageType("phone-error-add")
+        console.log(error.response.data)
+        return
+      })
 
     setTimeout(() => {
       setMessage(null)
