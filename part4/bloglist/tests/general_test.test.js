@@ -206,3 +206,98 @@ describe('most blogs', () => {
 
 
 })
+
+describe('most likes', () => {
+
+    const listWithMultipleBlogs = [
+        {
+            _id: '5a422aa71b54a676234d17f8',
+            title: 'Canonical string reduction',
+            author: 'Edsger W. Dijkstra',
+            url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+            likes: 12,
+            __v: 0
+        },
+        {
+            _id: '84921u28hf9811',
+            title: 'Go To Statement Considered Harmful',
+            author: 'Edsger W. Dijkstra',
+            url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+            likes: 15,
+            __v: 0
+        },
+        {
+            _id: '4921r19hf131',
+            title: 'Go To Statement Considerd ydfya',
+            author: 'Edsger W. Dijkstra',
+            url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+            likes: 1,
+            __v: 0
+        },
+
+        {
+            _id: '4921r19hf131',
+            title: 'Go To Statement Considerd ydfya',
+            author: 'johnny yang',
+            url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+            likes: 571,
+            __v: 0
+        },
+
+        {
+            _id: '4921r19hf131',
+            title: 'Go To Statement Considerd ydfya',
+            author: 'johnny yang',
+            url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+            likes: 1000,
+            __v: 0
+        },
+
+        {
+            _id: '4921r19hf131',
+            title: 'Go To Statement Considerd ydfya',
+            author: 'abraham lincoln',
+            url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+            likes: 2121,
+            __v: 0
+        },
+
+        {
+            _id: '4921r19hf131',
+            title: 'Go To Statement Considerd ydfya',
+            author: 'abraham lincoln',
+            url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+            likes: 10,
+            __v: 0
+        },
+
+        {
+            _id: '4921r19hf131',
+            title: 'Go To Statement Considerd ydfya',
+            author: 'abraham lincoln',
+            url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+            likes: 10,
+            __v: 0
+        },
+
+        {
+            _id: '4921r19hf131',
+            title: 'Go To Statement Considerd ydfya',
+            author: 'abraham lincoln',
+            url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+            likes: 10,
+            __v: 0
+        }
+    ]
+
+    test('of abraham lincoln', () => {
+        const result = listHelper.mostLikes(listWithMultipleBlogs)
+
+        expect(result).toEqual({
+            author: 'abraham lincoln',
+            likes: 2151
+        })
+    })
+
+
+})

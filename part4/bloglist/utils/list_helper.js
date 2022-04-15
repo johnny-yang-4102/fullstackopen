@@ -52,7 +52,38 @@ const mostBlogs = (blogs) => {
 
     
 }
+
+const mostLikes = (blogs) => {
+    //Get amt of blogs for each author --> mapAuthorToBlogs
+    //group by author --> map author -> blog () sumBy(# of occurences of author's NAME)
+    //Get MAX of the sum in array1 and return
+
+    /*/
+                _id: '5a422aa71b54a676234d17f8',
+            title: 'Go To Statement Considered Harmful',
+            author: 'Edsger W. Dijkstra',
+            url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+            likes: 5,
+            __v: 0
+    /*/
+
+
+    const likesCountBlogs = _(blogs).groupBy('author').map((objs, key) => 
+        ({
+            'author': key,
+            //What to put here? How to obtain sum when the key's are different?
+            'likes' : _.sumBy(objs, 'likes')
+            
+        })
+    ).value()
+
+    console.log(likesCountBlogs)
+
+    return _.maxBy(likesCountBlogs, 'likes')
+
+    
+}
   
 module.exports = {
-    dummy, totalLikes, favoriteBlog, mostBlogs
+    dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes
 }
